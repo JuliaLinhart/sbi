@@ -17,7 +17,6 @@ from sbi import utils as utils
 from sbi.inference import NeuralInference
 from sbi.inference.posteriors import MCMCPosterior, RejectionPosterior
 from sbi.inference.potentials import likelihood_estimator_based_potential
-from sbi.types import TorchModule
 from sbi.utils import check_estimator_arg, validate_theta_and_x, x_shape_from_simulation
 from sbi.utils.sbiutils import mask_sims_from_prior
 from sbi.utils.user_input_checks import process_x
@@ -270,7 +269,7 @@ class LikelihoodEstimator(NeuralInference, ABC):
 
     def build_posterior(
         self,
-        density_estimator: Optional[TorchModule] = None,
+        density_estimator: Optional[nn.Module] = None,
         prior: Optional[Any] = None,
         sample_with: str = "mcmc",
         mcmc_method: str = "slice_np",
@@ -297,6 +296,7 @@ class LikelihoodEstimator(NeuralInference, ABC):
             mcmc_parameters: Additional kwargs passed to `MCMCPosterior`.
             rejection_sampling_parameters: Additional kwargs passed to
                 `RejectionPosterior`.
+
         Returns:
             Posterior $p(\theta|x)$  with `.sample()` and `.log_prob()` methods
             (the returned log-probability is unnormalized).

@@ -326,8 +326,13 @@ class MultipleIndependent(Distribution):
     def support(self):
         # return independent constraints for each distribution.
         return MultipleIndependentConstraints(
+<<<<<<< HEAD
             multiple_constraints=[d.support for d in self.dists],
             dims_per_constraint=self.dims_per_dist,
+=======
+            constraints=[d.support for d in self.dists],  # type: ignore
+            dims_per_constraint=self.dims_per_dist.tolist(),
+>>>>>>> Type fixes such that the codebase passes pyright
         )
 
 
