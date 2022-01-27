@@ -3,7 +3,7 @@
 
 
 import warnings
-from typing import Dict, Optional, Sequence, Union
+from typing import Dict, List, Optional, Sequence, Union
 
 import torch
 from scipy.stats._distn_infrastructure import rv_frozen
@@ -209,8 +209,10 @@ class MultipleIndependent(Distribution):
         self.dists = dists
         # numel() instead of event_shape because for all dists both is possible,
         # event_shape=[1] or batch_shape=[1]
-        self.dims_per_dist = torch.as_tensor([d.sample().numel() for d in self.dists])
-        self.ndims = torch.sum(torch.as_tensor(self.dims_per_dist)).item()
+        self.dims_per_dist: Tensor = torch.as_tensor(
+            [d.sample().numel() for d in self.dists]
+        )
+        self.ndims = int(torch.sum(torch.as_tensor(self.dims_per_dist)).item())
         self.custom_arg_constraints = arg_constraints
 
         super().__init__(
@@ -282,7 +284,7 @@ class MultipleIndependent(Distribution):
         log_probs = []
         dims_covered = 0
         for idx, d in enumerate(self.dists):
-            ndims = self.dims_per_dist[idx].item()
+            ndims = int(self.dims_per_dist[idx].item())
             v = value[:, dims_covered : dims_covered + ndims]
             # Reshape here to ensure all returned log_probs are 2D for concatenation.
             log_probs.append(d.log_prob(v).reshape(num_samples, 1))
@@ -326,13 +328,8 @@ class MultipleIndependent(Distribution):
     def support(self):
         # return independent constraints for each distribution.
         return MultipleIndependentConstraints(
-<<<<<<< HEAD
             multiple_constraints=[d.support for d in self.dists],
-            dims_per_constraint=self.dims_per_dist,
-=======
-            constraints=[d.support for d in self.dists],  # type: ignore
             dims_per_constraint=self.dims_per_dist.tolist(),
->>>>>>> Type fixes such that the codebase passes pyright
         )
 
 
@@ -340,7 +337,7 @@ class MultipleIndependentConstraints(constraints.Constraint):
     def __init__(
         self,
         multiple_constraints: Sequence[constraints.Constraint],
-        dims_per_constraint: list,
+        dims_per_constraint: List,
     ):
         """Define multiple independent constraints to check support of independent
         joint distributions.

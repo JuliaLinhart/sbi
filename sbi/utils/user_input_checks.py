@@ -26,7 +26,7 @@ from sbi.utils.user_input_checks_utils import (
 
 
 def process_prior(
-    prior, custom_prior_wrapper_kwargs: Optional[Dict] = {}
+    prior, custom_prior_wrapper_kwargs: Dict = {}
 ) -> Tuple[Distribution, int, bool]:
     """Return PyTorch distribution-like prior from user-provided prior.
 
@@ -73,7 +73,7 @@ def process_prior(
 
 
 def process_custom_prior(
-    prior, custom_prior_wrapper_kwargs: Optional[Dict] = {}
+    prior, custom_prior_wrapper_kwargs: Dict = {}
 ) -> Tuple[Distribution, int, bool]:
     """Check and return corrected prior object defined by the user.
 
@@ -102,7 +102,7 @@ def process_custom_prior(
 
 
 def maybe_wrap_prior_as_pytorch(
-    prior, custom_prior_wrapper_kwargs: Optional[Dict[str, Any]] = {}
+    prior, custom_prior_wrapper_kwargs: Dict[str, Any] = {}
 ) -> Tuple[Distribution, bool]:
     """Check prior return type and maybe wrap as PyTorch.
 
